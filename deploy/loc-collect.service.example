@@ -1,0 +1,10 @@
+# 定位收集器（一次性工作）：搭配 loc-collect.timer 每分鐘執行一次
+# 放到 ~/.config/systemd/user/loc-collect.service
+[Unit]
+Description=家用儀表板：收集一次手機定位
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/home-dash
+EnvironmentFile=%h/.config/home-dash/env
+ExecStart=/usr/bin/python3 %h/home-dash/tools/loc_collect.py --prune

@@ -1,0 +1,67 @@
+{
+ "_說明": "範例組合三：溫濕度。",
+ "custom": {
+  "title": "溫濕度",
+  "cards": [
+   {
+    "type": "value",
+    "title": "各房間",
+    "icon": "🌡️",
+    "entities": [
+     {
+      "id": "sensor.your_living_room_temperature",
+      "name": "客廳溫度",
+      "unit": "°C",
+      "decimals": 1
+     },
+     {
+      "id": "sensor.your_living_room_humidity",
+      "name": "客廳濕度",
+      "unit": "%",
+      "decimals": 0
+     },
+     {
+      "id": "sensor.your_bedroom_temperature",
+      "name": "臥室溫度",
+      "unit": "°C",
+      "decimals": 1
+     },
+     {
+      "id": "sensor.your_bedroom_humidity",
+      "name": "臥室濕度",
+      "unit": "%",
+      "decimals": 0
+     }
+    ]
+   },
+   {
+    "type": "chart",
+    "title": "客廳溫度（過去 24 小時）",
+    "entity": "sensor.your_living_room_temperature",
+    "hours": 24,
+    "unit": "°C",
+    "decimals": 1
+   },
+   {
+    "type": "chart",
+    "title": "客廳濕度（過去 24 小時）",
+    "entity": "sensor.your_living_room_humidity",
+    "hours": 24,
+    "unit": "%",
+    "decimals": 0
+   },
+   {
+    "type": "list",
+    "title": "所有溫度感應器",
+    "filter": {
+     "domain": "sensor",
+     "contains": [
+      "temperature"
+     ]
+    },
+    "sort": "value_desc",
+    "limit": 20
+   }
+  ]
+ }
+}

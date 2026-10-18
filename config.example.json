@@ -1,0 +1,144 @@
+{
+ "_說明": "複製成 config.json 後再改。以底線開頭的鍵（像這一行）是註解，程式會忽略。沒有填的欄位一律用預設值；沒設定好的功能只會顯示「尚未設定」。完整欄位說明見 README.md。",
+ "title": "家用儀表板",
+ "_說明_title": "頁面左上角與瀏覽器分頁的標題。",
+ "server": {
+  "_說明": "host 預設 127.0.0.1＝只有本機能連。要讓手機連：host 改 0.0.0.0、allowed_networks 加上區網網段（例 192.168.1.0/24）、必須設 access_token（沒設的話非本機綁定會拒絕啟動）。用主機名稱（不是 IP）連線時，名稱要列進 allowed_hosts。",
+  "host": "127.0.0.1",
+  "port": 9877,
+  "allowed_networks": [
+   "127.0.0.1/32",
+   "::1/128"
+  ],
+  "allowed_hosts": [],
+  "_說明_access_token": "存取密語：只能用英文字母、數字與 - . _ ~，長度 12–128（中文、空白、引號都不行）。產生：python3 -c \"import secrets;print(secrets.token_urlsafe(24))\"。設了之後，瀏覽器第一次會看到登入頁，輸入一次後存 cookie 30 天。",
+  "access_token": "",
+  "_說明_tls": "跨機器使用請用 HTTPS 或 VPN 等加密通道：本程式自帶 HTTPS 就填憑證與私鑰（PEM 路徑）；前面放了負責 HTTPS 的反向代理、本程式自己是 HTTP 時，public_https 設 true（cookie 會加 Secure）。",
+  "tls_cert": "",
+  "tls_key": "",
+  "public_https": false
+ },
+ "utc_offset_hours": 8,
+ "_說明_utc_offset_hours": "顯示與「今天」使用的時區（UTC 偏移小時數，台灣是 8）。",
+ "data_dir": "data",
+ "_說明_data_dir": "執行時資料夾（軌跡資料庫、美食庫…）。相對路徑以程式資料夾為準。不要放進版本控制。",
+ "features": {
+  "_說明": "個別開關。設成 false 的功能，分頁／卡片不會出現，對應的 API 回 404。",
+  "commute": true,
+  "food": true,
+  "custom": true,
+  "metro": true
+ },
+ "ha": {
+  "_說明": "Home Assistant。通勤軌跡的定位收集器與「自訂」分頁需要。權杖不要寫在這個檔案：放環境變數（預設 HA_TOKEN）或權限 600 的檔案（token_file）。",
+  "url": "http://homeassistant.local:8123",
+  "token_env": "HA_TOKEN",
+  "token_file": "",
+  "verify_ssl": true,
+  "ca_file": "",
+  "timeout_seconds": 20
+ },
+ "map": {
+  "_說明": "google_maps_js_key 選填：有的話地圖可切換 Google 底圖，沒有就用 OpenStreetMap。center 是沒有軌跡時地圖的預設中心。",
+  "google_maps_js_key": "",
+  "center": [
+   25.0478,
+   121.517
+  ]
+ },
+ "places": {
+  "_說明": "常用地點。用在：軌跡裡的停留會顯示成這個名字、美食庫可以「以這裡為中心」找店。radius 是判定『在這裡』的半徑（公尺）。下面兩組是「台北 101」與「台北車站」的公開地標座標，純粹示意（並不是誰的住家或公司），請換成自己的。",
+  "家": {
+   "lat": 25.033,
+   "lon": 121.5654,
+   "radius": 70,
+   "icon": "🏠"
+  },
+  "公司": {
+   "lat": 25.0478,
+   "lon": 121.517,
+   "radius": 150,
+   "icon": "🏢"
+  }
+ },
+ "commute": {
+  "_說明": "entities 是 Home Assistant 裡手機的 device_tracker 實體（第一個是主要來源，其餘畫成虛線）。另外要排程執行 tools/loc_collect.py 才會有資料。",
+  "entities": [
+   "device_tracker.your_phone"
+  ],
+  "max_accuracy_m": 60,
+  "stay_min_minutes": 8,
+  "stay_radius_m": 50,
+  "retention_days": 365
+ },
+ "food": {
+  "_說明": "price_tiers：一人花費低於第一個數字＝平價，介於兩者＝吃好一點，以上＝高價。drink_categories：骰子預設不骰的類別。",
+  "db": "food.sqlite",
+  "price_tiers": [
+   400,
+   1000
+  ],
+  "drink_categories": [
+   "飲料",
+   "咖啡",
+   "甜點"
+  ],
+  "near_radius_max_m": 1500,
+  "gps_max_age_minutes": 20
+ },
+ "custom": {
+  "_說明": "「自訂」分頁：用卡片顯示你 Home Assistant 裡的資料（只讀，不會控制任何裝置）。說明書：docs/自訂分頁說明書.md。三種卡片：value（顯示目前值）、chart（過去 N 小時折線圖）、list（一組實體的列表）。下面是示範，實體 ID（sensor.your_…）要換成你自己的；找不到的實體會在卡片上標示「找不到」。",
+  "title": "自訂",
+  "cache_seconds": 30,
+  "cards": [
+   {
+    "type": "value",
+    "title": "客廳環境",
+    "icon": "🌡️",
+    "entities": [
+     {
+      "id": "sensor.your_living_room_temperature",
+      "name": "溫度"
+     },
+     {
+      "id": "sensor.your_living_room_humidity",
+      "name": "濕度",
+      "decimals": 0
+     }
+    ]
+   },
+   {
+    "type": "chart",
+    "title": "溫度走勢",
+    "entity": "sensor.your_living_room_temperature",
+    "hours": 24
+   },
+   {
+    "type": "list",
+    "title": "用電中的插座",
+    "note": "列出 Home Assistant 裡所有單位為 W 的感應器，由大到小排。",
+    "filter": {
+     "domain": "sensor",
+     "unit": "W"
+    },
+    "limit": 15
+   }
+  ]
+ },
+ "metro": {
+  "_說明": "臺北捷運公司 API（列車到站倒數、車廂擁擠度）。必須自己向臺北捷運公司申請 API 會員取得帳號密碼（見 README「需要自己申請的東西」）。帳號密碼不要寫在這個檔案：用環境變數 METRO_ACCOUNT／METRO_PASSWORD，或把 credentials_file 指到一個權限 600 的 JSON 檔（內容 {\"account\": \"…\", \"password\": \"…\"}）。依官方規範，帳密不得提供給第三方，也請不要把儀表板開放給不信任的人。",
+  "credentials_file": "",
+  "account_env": "METRO_ACCOUNT",
+  "password_env": "METRO_PASSWORD",
+  "_說明_stations": "常用站（站名，最多 10 個）。示範用的是大站「台北車站」，請改成你自己的。nearby_stations：車廂擁擠度要顯示常用站前後各幾站內的列車。cache_seconds 不得小於 30。",
+  "stations": [
+   "台北車站"
+  ],
+  "nearby_stations": 2,
+  "cache_seconds": 30,
+  "timeout_seconds": 15,
+  "max_response_bytes": 5000000,
+  "api_base": "https://api.metro.taipei/metroapi",
+  "station_list_url": "https://ws.metro.taipei/trtcBeaconBE/RouteControl.asmx"
+ }
+}

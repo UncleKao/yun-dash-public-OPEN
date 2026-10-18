@@ -1,0 +1,7 @@
+# 不用 systemd 的話，用 cron 也行（crontab -e）。權杖放在只有自己能讀的檔案，不要直接寫在指令列。
+# 先建立私人目錄與權杖檔（權限 600，建立時就沒有「先建立再改權限」的空窗）：
+#   umask 077; mkdir -p ~/.config/home-dash ~/.cache/home-dash
+#   install -m 600 /dev/null ~/.config/home-dash/env
+#   用編輯器在 ~/.config/home-dash/env 寫一行：HA_TOKEN=你的長期存取權杖
+# 請把 /path/to/home-dash 換成實際位置。日誌放在自己的 ~/.cache 底下，不要放 /tmp（共用目錄）。
+* * * * * bash -c 'set -a; . ~/.config/home-dash/env; set +a; exec /usr/bin/python3 /path/to/home-dash/tools/loc_collect.py --prune' >> ~/.cache/home-dash/loc_collect.log 2>&1

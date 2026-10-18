@@ -1,0 +1,44 @@
+{
+ "_說明": "範例組合一：每日步數＋體重。把 sensor.your_… 換成你自己的實體 ID，再把 \"custom\" 這一整段放進 config.json（取代原本的 custom）。",
+ "custom": {
+  "title": "健康",
+  "cards": [
+   {
+    "type": "value",
+    "title": "今天",
+    "icon": "👟",
+    "entities": [
+     {
+      "id": "sensor.your_phone_steps",
+      "name": "步數",
+      "unit": "步",
+      "decimals": 0
+     },
+     {
+      "id": "sensor.your_scale_weight",
+      "name": "體重",
+      "unit": "kg",
+      "decimals": 1
+     }
+    ]
+   },
+   {
+    "type": "chart",
+    "title": "步數（過去 7 天）",
+    "entity": "sensor.your_phone_steps",
+    "hours": 168,
+    "unit": "步",
+    "decimals": 0,
+    "note": "手機計步器的數值通常是「當天累計」，所以每天會歸零一次，圖會呈鋸齒狀。"
+   },
+   {
+    "type": "chart",
+    "title": "體重（過去 7 天）",
+    "entity": "sensor.your_scale_weight",
+    "hours": 168,
+    "unit": "kg",
+    "decimals": 1
+   }
+  ]
+ }
+}

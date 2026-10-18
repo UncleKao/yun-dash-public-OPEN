@@ -1,0 +1,16 @@
+# 個人設定與執行時資料：絕對不要提交
+# 任何名稱含 config 的 .json（含 --config 指到專案內的自訂檔名，如 myconfig.json）都不提交，只放行範例
+*config*.json
+!config.example.json
+/data/
+*.sqlite
+*.sqlite-*
+*.lock
+.env
+*.env
+
+# 暫存、備份
+__pycache__/
+*.pyc
+*.bak*
+*.tmp

@@ -1,0 +1,51 @@
+{
+ "_說明": "範例組合二：全屋用電＋插座列表。需要你的 Home Assistant 裡有電表或電力監測插座。",
+ "custom": {
+  "title": "用電",
+  "cards": [
+   {
+    "type": "value",
+    "title": "全屋用電",
+    "icon": "⚡",
+    "entities": [
+     {
+      "id": "sensor.your_house_power",
+      "name": "目前功率",
+      "unit": "W",
+      "decimals": 0
+     },
+     {
+      "id": "sensor.your_house_energy_today",
+      "name": "今日用電",
+      "unit": "kWh",
+      "decimals": 1
+     }
+    ],
+    "link": "http://homeassistant.local:8123/energy"
+   },
+   {
+    "type": "chart",
+    "title": "全屋功率（過去 24 小時）",
+    "entity": "sensor.your_house_power",
+    "hours": 24,
+    "unit": "W",
+    "decimals": 0
+   },
+   {
+    "type": "list",
+    "title": "各插座目前功率",
+    "note": "列出所有單位為 W 的感應器，由大到小排；名稱或 ID 含 nominal 的（例如 UPS 的額定功率）不列。",
+    "filter": {
+     "domain": "sensor",
+     "unit": "W",
+     "exclude": [
+      "nominal",
+      "額定"
+     ]
+    },
+    "sort": "value_desc",
+    "limit": 20
+   }
+  ]
+ }
+}

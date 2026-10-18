@@ -1,0 +1,17 @@
+# systemd「使用者」服務範例：放到 ~/.config/systemd/user/home-dash.service
+# 啟用：systemctl --user daemon-reload && systemctl --user enable --now home-dash
+# 開機（未登入）也要跑：loginctl enable-linger $USER
+# 權杖放在 ~/.config/home-dash/env：用 umask 077 加 install -m 600 /dev/null 建立後再用編輯器寫（見 README），內容一行：HA_TOKEN=你的長期存取權杖
+[Unit]
+Description=家用儀表板
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/home-dash
+EnvironmentFile=%h/.config/home-dash/env
+ExecStart=/usr/bin/python3 %h/home-dash/server.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

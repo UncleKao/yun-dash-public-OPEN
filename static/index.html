@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>家用儀表板</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="/app.css">
+</head><body>
+<header><h1 id="title">家用儀表板</h1>
+<nav id="nav" style="display:contents">
+ <button data-t="commute" data-f="commute">今日通勤</button>
+ <button data-t="dice" data-f="food">吃飯骰子</button>
+ <button data-t="near" data-f="food">附近的店</button>
+ <button data-t="db" data-f="food">美食庫</button>
+ <button data-t="metro" data-f="metro">捷運</button>
+ <button data-t="custom" data-f="custom" id="nav-custom">自訂</button>
+</nav>
+<span id="clock"></span></header>
+<main>
+<div id="setup" class="notice" style="display:none"></div>
+
+<section id="commute" class="tab">
+ <div class="notice" id="commute-na" style="display:none"></div>
+ <div class="card"><div class="row"><input type="date" id="date"><button class="btn" id="btn-track">看這天</button><span class="muted" id="tinfo"></span></div><div id="map"></div></div>
+ <div class="card"><h2>整天回推</h2><div id="segs" class="tl">載入中…</div>
+  <div class="muted">依手機定位事後推算：連續 8 分鐘以上待在同一處算停留，停留之間依速度分成走路／搭乘交通工具／慢慢移動。不知道搭的是哪一班車。</div></div>
+</section>
+
+<section id="dice" class="tab">
+ <div class="notice" id="dice-na" style="display:none"></div>
+ <div class="card"><div class="row">
+  <select id="place" title="從哪裡找"><option value="">現在位置（手機定位）</option></select>
+  <select id="ddist"><option value="">不指定行政區</option></select>
+  <select id="dtier"><option value="">不限價位分層</option><option value="daily">平價</option><option value="mid">吃好一點</option><option value="high">高價</option></select>
+  <select id="price"><option value="">不限預算</option><option value="200">200 以內</option><option value="400">400 以內</option><option value="800">800 以內</option></select>
+  <input id="cat" placeholder="指名類別（例：麵食）" size="14">
+  <label><input type="checkbox" id="drinks"> 喝的／甜點</label>
+  <label><input type="checkbox" id="dopen" checked> 排除已知沒開的</label>
+  <button class="btn" id="btn-roll">骰一個</button></div>
+  <div id="diceout" class="pick muted">按「骰一個」。</div></div>
+</section>
+
+<section id="near" class="tab">
+ <div class="notice" id="near-na" style="display:none"></div>
+ <div class="card"><div class="row"><label>半徑 <input id="radius" type="number" value="300" min="50" max="1500" style="width:80px"> 公尺</label>
+  <label><input type="checkbox" id="opennow" checked> 只看現在有開</label><button class="btn" id="btn-near">查</button></div>
+  <div id="nearout" class="muted">按「查」。以手機最近的定位為中心。</div></div>
+</section>
+
+<section id="db" class="tab">
+ <div class="notice" id="db-na" style="display:none"></div>
+ <div class="card"><h2>美食庫概況</h2><div id="stats" class="stats">載入中…</div></div>
+ <div class="card"><h2>分類瀏覽</h2>
+  <div class="row"><select id="lnear"><option value="gps">跟著手機</option><option value="all">全部（不限距離）</option></select>
+   <label>半徑 <input id="lradius" type="number" value="800" style="width:80px"> m</label>
+   <input id="lq" placeholder="店名／地址關鍵字" size="16"><label><input type="checkbox" id="ltried"> 只看吃過</label>
+   <button class="btn" id="btn-cats">套用</button></div>
+  <div id="tiers" class="chips"></div><div id="chips" class="chips"></div>
+  <div class="muted" id="linfo"></div>
+  <div id="lcards" class="cards"></div>
+  <div class="tablewrap"><table id="ltable" class="responsive"><thead><tr><th>店名</th><th>類別</th><th class="r">距離</th><th>評分</th><th class="r">價位</th><th>營業時間</th><th>吃過</th><th>地址</th></tr></thead><tbody></tbody></table></div></div>
+ <div class="card"><h2>吃過的店</h2><div id="ate">載入中…</div></div>
+</section>
+
+<section id="metro" class="tab">
+ <div class="notice" id="metro-na" style="display:none"></div>
+ <div class="card"><div class="row"><h2 style="margin:0">列車到站倒數</h2><button class="btn alt" id="btn-metro">重新整理</button><span class="muted" id="metro-note"></span></div>
+  <div id="metro-arr" class="muted">載入中…</div></div>
+ <div class="card"><h2>車廂擁擠度（常用站附近的列車）</h2><div id="metro-crowd" class="muted">載入中…</div><div class="muted" id="metro-levelnote" style="margin-top:8px"></div></div>
+ <div class="muted">資料來自臺北捷運公司 API，伺服器每 30 秒才向捷運更新一次；頁面開著時每 30 秒自動重讀。</div>
+</section>
+
+<section id="custom" class="tab">
+ <div class="notice" id="custom-na" style="display:none"></div>
+ <div class="row"><button class="btn alt" id="btn-custom">重新整理</button><span class="muted" id="custom-note"></span></div>
+ <div id="custom-cards" class="cgrid"></div>
+</section>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/app.js"></script>
+</body></html>
